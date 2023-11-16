@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particle Physics Calculator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #000000;
+        }
+
+        .calculator-section {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(20, 0, 0, .2);
+            width: 375px;
+            margin: 20px;
+            height: 435px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input {
+            width: calc(100% - 16px);
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="button"] {
+            background-color: #3498db; /* Adjust the color as desired */
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+
+        p {
+            margin-top: 20px;
+            color: #333;
+        }
+
+        #backward-section, #electric-field-section {
+            display: none;
+        }
+
+        #toggle-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 300%;
+            max-width: 500px;
+            margin-bottom: 5px;
+        }
+
+        #toggle-buttons button {
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Particle Physics Calculator</h1>
+
+    <div id="toggle-buttons">
+        <button onclick="toggleSection('forward-section')">Force Acceleration</button>
+        <button onclick="toggleSection('backward-section')">2nd Charge</button>
+        <button onclick="toggleSection('electric-field-section')">Electric Field</button>
+    </div>
+
+    <div id="forward-section" class="calculator-section">
+        <h2>Force and Acceleration</h2>
+        <form id="particleForm">
+            <label for="charge1"> Particle 1 (µC):</label>
+            <input type="text" name="charge1" id="charge1" required>
+
+            <label for="charge2"> Particle 2 (µC):</label>
+            <input type="text" name="charge2" id="charge2" required>
+
+            <label for="distance"> Distance (meters):</label>
+            <input type="text" name="distance" id="distance" required>
+
+            <label for="mass"> Mass (kilograms):</label>
+            <input type="text" name="mass" id="mass" required>
+
+            <input type="button" value="Calculate" onclick="calculate()">
+        </form>
+
+        <p id="result"></p>
+    </div>
+
+    <div id="backward-section" class="calculator-section">
+        <h2>2nd Charge</h2>
+        <form id="backwardForm">
+            <label for="charge1_backward"> Particle 1 (µC):</label>
+            <input type="text" name="charge1_backward" id="charge1_backward" required>
+
+            <label for="distance_backward"> Distance (meters):</label>
+            <input type="text" name="distance_backward" id="distance_backward" required>
+
+            <label for="force_backward"> Force (Newtons):</label>
+            <input type="text" name="force" id="force_backward" required>
+
+            <input type="button" value="Calculate" onclick="calculateBackward()">
+        </form>
+
+        <p id="charge2_backward"></p>
+    </div>
+
+    <div id="electric-field-section" class="calculator-section">
+        <h2>Electric Field Calculation</h2>
+        <form id="electricFieldForm">
+            <label for="charge_electric"> Charge (µC):</label>
+            <input type="text" name="charge_electric" id="charge_electric" required>
+
+            <label for="distance_electric"> Distance (meters):</label>
+            <input type="text" name="distance_electric" id="distance_electric" required>
+
+            <input type="button" value="Calculate Electric Field" onclick="calculateElectricField()">
+        </form>
+
+        <p id="electric_field_result"></p>
+    </div>
+
+    <script>
+        function calculate() {
+            var q1 = parseFloat(document.getElementById("charge1").value) * 0.000001,
+                q2 = parseFloat(document.getElementById("charge2").value) * 0.000001,
+                r = parseFloat(document.getElementById("distance").value),
+                m = parseFloat(document.getElementById("mass").value);
+
+            var f = Math.abs(((9 * Math.pow(10, 9)) * q1 * q2) / Math.pow(r, 2));
+            var a = Math.abs(f / m);
+
+            document.getElementById("result").innerHTML = "Force between the particles: " + f + " N<br>Acceleration of the particles: " + a + " m/s^2";
+        }
+
+        function calculateBackward() {
+            var q1 = parseFloat(document.getElementById("charge1_backward").value) * 0.000001,
+                r = parseFloat(document.getElementById("distance_backward").value),
+                force = parseFloat(document.getElementById("force_backward").value);
+
+            var q2Candidate = Math.pow(Math.sqrt(Math.abs(force) * Math.pow(r, 2) / (9 * Math.pow(10, 9) * Math.abs(q1))), 2);
+            var q2 = isNaN(q2Candidate) ? "Invalid input" : q2Candidate + " µC";
+
+            document.getElementById("charge2_backward").innerHTML = "Charge of Particle 2: " + q2;
+        }
+
+        function calculateElectricField() {
+            var q = parseFloat(document.getElementById("charge_electric").value) * 0.000001,
+                r = parseFloat(document.getElementById("distance_electric").value);
+
+            var electricField = Math.abs((9 * Math.pow(10, 9) * q) / Math.pow(r, 2));
+
+            document.getElementById("electric_field_result").innerHTML = "Electric Field at the location: " + electricField + " N/C";
+        }
+
+        function toggleSection(sectionId) {
+            var forwardSection = document.getElementById("forward-section");
+            var backwardSection = document.getElementById("backward-section");
+            var electricFieldSection = document.getElementById("electric-field-section");
+
+            switch (sectionId) {
+                case 'forward-section':
+                    forwardSection.style.display = "block";
+                    backwardSection.style.display = "none";
+                    electricFieldSection.style.display = "none";
+                    break;
+                case 'backward-section':
+                    forwardSection.style.display = "none";
+                    backwardSection.style.display = "block";
+                    electricFieldSection.style.display = "none";
+                    break;
+                case 'electric-field-section':
+                    forwardSection.style.display = "none";
+                    backwardSection.style.display = "none";
+                    electricFieldSection.style.display = "block";
+                    break;
+                default:
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>
