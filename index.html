@@ -28,6 +28,7 @@
             box-shadow: 0 0 10px rgba(20, 0, 0, .2);
             width: 375px;
             margin: 20px;
+            display: none;
         }
 
         label {
@@ -56,15 +57,18 @@
             font-size: 20px;
             margin-bottom: 10px;
             margin-top: 10px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        input[type="button"].active {
+            background-color: #555;
+            color: #ccc;
+            transform: scale(0.95);
         }
 
         p {
             margin-top: 20px;
             color: #333;
-        }
-
-        #backward-section, #electric-field-section {
-            display: none;
         }
 
         #toggle-buttons {
@@ -85,6 +89,13 @@
             border-radius: 4px;
             font-size: 16px;
             margin-right: 10px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        #toggle-buttons button.active {
+            background-color: #555;
+            color: #ccc;
+            transform: scale(0.95);
         }
     </style>
 </head>
@@ -92,9 +103,9 @@
     <h1>Particle Physics Calculator</h1>
 
     <div id="toggle-buttons">
-        <button onclick="toggleSection('forward-section')">Force Acceleration</button>
-        <button onclick="toggleSection('backward-section')">2nd Charge</button>
-        <button onclick="toggleSection('electric-field-section')">Electric Field</button>
+        <button id="button-forward-section" onclick="toggleSection('forward-section')">Force / Acceleration</button>
+        <button id="button-backward-section" onclick="toggleSection('backward-section')">2nd Charge</button>
+        <button id="button-electric-field-section" onclick="toggleSection('electric-field-section')">Electric Field</button>
     </div>
 
     <div id="forward-section" class="calculator-section">
@@ -179,35 +190,25 @@
             var q = parseFloat(document.getElementById("charge_electric").value) * 0.000001,
                 r = parseFloat(document.getElementById("distance_electric").value);
 
-            var electricField = Math.abs((9 * Math.pow(10, 9) * q) / Math.pow(r, 2));
+            var electricField = Math.abs((9 * Math.pow(10, 9)) * q / Math.pow(r, 2));
 
             document.getElementById("electric_field_result").innerHTML = "Electric Field at the location: " + electricField + " N/C";
         }
 
         function toggleSection(sectionId) {
-            var forwardSection = document.getElementById("forward-section");
-            var backwardSection = document.getElementById("backward-section");
-            var electricFieldSection = document.getElementById("electric-field-section");
+            var sections = ['forward-section', 'backward-section', 'electric-field-section'];
+            sections.forEach(function (section) {
+                var button = document.getElementById('button-' + section);
+                var sectionElement = document.getElementById(section);
 
-            switch (sectionId) {
-                case 'forward-section':
-                    forwardSection.style.display = "block";
-                    backwardSection.style.display = "none";
-                    electricFieldSection.style.display = "none";
-                    break;
-                case 'backward-section':
-                    forwardSection.style.display = "none";
-                    backwardSection.style.display = "block";
-                    electricFieldSection.style.display = "none";
-                    break;
-                case 'electric-field-section':
-                    forwardSection.style.display = "none";
-                    backwardSection.style.display = "none";
-                    electricFieldSection.style.display = "block";
-                    break;
-                default:
-                    break;
-            }
+                if (section === sectionId) {
+                    button.classList.add('active');
+                    sectionElement.style.display = 'block';
+                } else {
+                    button.classList.remove('active');
+                    sectionElement.style.display = 'none';
+                }
+            });
         }
     </script>
 </body>
